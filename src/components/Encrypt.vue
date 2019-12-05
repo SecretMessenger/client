@@ -1,39 +1,57 @@
 <template>
-<div>
-  <form method="post" id="encrypt-post" @submit.prevent="upload">
-    <input type="file" id placeholder="upload" @change="openFile"/>
-    <textarea id cols="30" rows="10" placeholder="Your secrets...." v-model="text"></textarea>
-    <input type="submit" value="Encrypt" />
-  </form>
-    <img id="preview">
-</div>
+  <div>
+    <form method="post" id="encrypt-post" @submit.prevent="submitFile">
+      <input type="file" @change="triggerFunction" ref="file" />
+      <textarea id cols="30" rows="10" placeholder="Your secrets...." v-model="message"></textarea>
+      <input type="submit" value="Encrypt" />
+    </form>
+    <img id="preview" />
+  </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   components: {},
   data() {
     return {
-      text: "",
-      img: ""
+      message: "",
+      image: ""
     };
   },
   methods: {
-    upload() {
-
+    triggerFunction() {
+      this.previewImage(event);
+      this.handleFileUpload();
     },
-    openFile(event) {
-    let input = event.target;
+    handleFileUpload() {
+      this.image = this.$refs.file.files[0];
+    },
+    previewImage(event) {
+      let input = event.target;
 
-    let reader = new FileReader();
-    reader.onload = function(){
-      let dataURL = reader.result;
-      let preview = document.getElementById('preview');
-      preview.src = dataURL;
-      console.log(reader);
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
+      let reader = new FileReader();
+      reader.onload = function() {
+        let dataURL = reader.result;
+        let preview = document.getElementById("preview");
+        preview.src = dataURL;
+        console.log(reader);
+      };
+      reader.readAsDataURL(input.files[0]);
+    },
+    submitFile() {
+      const fd = new FormData();
+      fd.append("image", this.image);
+      axios({
+        url: "http://localhost:3000/",
+        method: "post",
+        data: {
+          image: fd,
+          message: this.message
+        }
+      });
+    }
   }
 };
 </script>
@@ -57,7 +75,6 @@ textarea {
   resize: none;
   padding: 0.5rem;
 }
-
 
 #encrypt-post {
   display: flex;
