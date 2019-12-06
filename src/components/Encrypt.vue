@@ -1,27 +1,28 @@
 <template>
   <div>
     <form method="post" id="encrypt-post" @submit.prevent="submitFile">
-      <input type="file" @change="triggerFunction" ref="file" />
-      <textarea id cols="30" rows="10" placeholder="Your secrets...." v-model="message"></textarea>
+      <input type="file" @change="triggerFunction" ref="file" required />
+      <textarea id cols="30" rows="10" placeholder="Your secrets...." v-model="message_to_hide"></textarea>
       <input type="submit" value="Encrypt" />
     </form>
-    <img id="preview" />
+    <ImagePreview :image_url="uploaded_image_base64"></ImagePreview>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import ImagePreview from "./ImagePreview.vue";
 
 export default {
-  components: {},
+  components: { ImagePreview },
   data() {
     return {
-      upload_image_url: "",
-      message: "",
+      uploaded_image_base64: "",
+      message_to_hide: "",
       image: "",
       image_url: "",
       password: ""
-    }
+    };
   },
   methods: {
     triggerFunction() {
@@ -35,35 +36,39 @@ export default {
       let input = event.target;
 
       let reader = new FileReader();
-      reader.onload = function() {
-        this.upload_image_url = reader.result;
-        let preview = document.getElementById("preview");
-        preview.src = this.upload_image_url;
-        // console.log(reader);
+      reader.onload = () => {
+        this.uploaded_image_base64 = reader.result;
+        // console.log(this.uploaded_image_base64, 'uploaded_image_base64');
       };
       reader.readAsDataURL(input.files[0]);
     },
     submitFile() {
       const fd = new FormData();
       fd.append("image", this.image);
+      fd.append("message_string", this.message_to_hide)
       axios({
-        url: "http://localhost:3000/",
-        method: "post",
-        data: {
-          image: fd,
-          message: this.message
-        }
+        url: "http://secretmessenger-server.angelavanessa.com/encode",
+        method: "POST",
+        data: fd,
+        headers: {'Content-Type': 'multipart/form-data' }
       })
+      
         .then(({ data }) => {
-          this.image_url = data.url
-          this.password = data.password
-          this.showUploadedImage()
-          this.$emit('show-share-buttons')
+          this.image_url = data.url;
+          this.password = data.password;
+          this.showUploadedImage();
+          this.$emit("change-image-url-on-share-button", this.image_url);
         })
-        .catch(err => console.log(err))
+        .catch((err) => console.log(err));
+
+      // coba //
+      // this.image_url =
+      //   "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcT8Cd-n8DnDIv9zPn-5kc4jaTvfE9CYmho02vFAI6djcmQtDXa_";
+      // this.showUploadedImage();
+      // this.$emit("change-image-url-on-share-button", this.image_url);
     },
-    showUploadedImage(){
-      document.getElementById("preview").src = this.image_url
+    showUploadedImage() {
+      this.uploaded_image_base64 = this.image_url;
     }
   }
 };
