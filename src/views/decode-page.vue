@@ -32,9 +32,13 @@
           </div>
           <div class="content">
             <div
-              class="ui red message box-error"
-              style="font-family: 'Kalam', cursive;background-color:transparent ;font-size:20px;text-align:justify;"
+              class="ui red message"
+              style="font-family: 'Kalam', cursive;
+  background-color: transparent;
+  font-size: 20px;
+  text-align: justify;"
             >
+              >
               {{ error }}
             </div>
           </div>
@@ -51,7 +55,14 @@
             Upload Image
           </div>
           <div class="content">
-            <div v-if="error" class="ui red message">
+            <div
+              v-if="error"
+              class="ui red message  box-error"
+              style="font-family: 'Kalam', cursive;
+  background-color: transparent;
+  font-size: 20px;
+  text-align: justify;"
+            >
               {{ error }}
             </div>
             <form class="ui form">
@@ -110,7 +121,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "../../config/axios";
 export default {
   data() {
     return {
@@ -130,14 +141,18 @@ export default {
     },
 
     validateImage(fileName) {
-      var allowedExtension = "png";
-      var fileExtension = fileName
+      const allowedExtension = ["png", "jpeg", "jpg"];
+      const fileExtension = fileName
         .split(".")
         .pop()
         .toLowerCase();
-
-      if (allowedExtension == fileExtension) return true;
-      else return false;
+      let isAllowed = false;
+      allowedExtension.forEach(ext => {
+        console.log(ext);
+        if (ext == fileExtension) isAllowed = true;
+        // else return false;
+      });
+      return isAllowed;
     },
     popUpModalError() {
       $("#error-popup").modal("show");
@@ -148,17 +163,16 @@ export default {
     submitData() {
       const fd = new FormData();
       fd.append("image", this.image);
-      const data = {
-        image: fd,
-        password: this.password
-      };
+      fd.append("password", this.password);
+      console.log(fd);
       axios({
         method: "post",
-        url: "",
-        data
+        url: "/decode",
+        data: fd,
+        headers: { "Content-Type": "multipart/form-data" }
       })
         .then(({ data }) => {
-          this.$emit("goToResultDEcodePage", data);
+          this.$emit("go-to-result-decode-page", "result-decode-page", data);
         })
         .catch(err => {
           this.error = err;
@@ -168,10 +182,11 @@ export default {
     handleFileUpload() {
       this.image = this.$refs.file.files[0];
       const fileName = this.image.name;
+      console.log(this.image);
       console.log(fileName);
       if (!this.validateImage(fileName)) {
         this.fileUploadColor = "red";
-        this.error = "File extension must be .png";
+        this.error = "File extension must be .png or .jpg";
         this.uploadButton = "disabled";
       } else {
         this.error = "";
@@ -184,12 +199,6 @@ export default {
 </script>
 
 <style>
-.box-error {
-  font-family: "Kalam", cursive;
-  background-color: transparent;
-  font-size: 20px;
-  text-align: justify;
-}
 .title-page {
   font-family: "Kalam", cursive;
   color: white;

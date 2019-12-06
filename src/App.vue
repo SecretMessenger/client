@@ -6,9 +6,11 @@
     ></homePage>
     <decodePage
       @goToHomePage="changePage"
+      @go-to-result-decode-page="resultDecode"
       v-if="activePage === 'decode-page'"
     ></decodePage>
     <resultDecodePage
+      :dataImage="dataImage"
       v-if="activePage === 'result-decode-page'"
     ></resultDecodePage>
   </div>
@@ -23,14 +25,19 @@ export default {
   name: "App",
   data() {
     return {
+      dataImage: "",
       activePage: "home-page"
     };
   },
   methods: {
-    changePage(page) {
-      console.log("halo");
+    changePage(page, data) {
       this.activePage = page;
       console.log(this.activePage);
+    },
+    resultDecode(page, data) {
+      this.activePage = page;
+      this.dataImage = data;
+      console.log(data);
     }
   },
   components: {
