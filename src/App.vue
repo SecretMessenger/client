@@ -1,6 +1,7 @@
 <template>
   <div>
     <homePage
+      @goToEncodePage="changePage"
       @goToDecodePage="changePage"
       v-if="activePage === 'home-page'"
     ></homePage>
@@ -13,6 +14,11 @@
       :dataImage="dataImage"
       v-if="activePage === 'result-decode-page'"
     ></resultDecodePage>
+    <encrypt
+      v-if="activePage === 'encode-page'"
+      @change-image-url-on-share-button="handleChangeImageUrlOnShareButton"
+    ></encrypt>
+    <FacebookButton v-if="imageUrl" :image-url="imageUrl"></FacebookButton>
   </div>
 </template>
 
@@ -20,11 +26,16 @@
 import homePage from "./views/home-page";
 import decodePage from "./views/decode-page";
 import resultDecodePage from "./views/result-decode-page";
+import Encrypt from "./components/Encrypt.vue";
+import FacebookButton from "./components/FacebookButton.vue";
 
 export default {
   name: "App",
   data() {
     return {
+      message: "Hello world",
+      imageUrl: "",
+      href_facebook_share_button: "",
       dataImage: "",
       activePage: "home-page"
     };
@@ -32,18 +43,23 @@ export default {
   methods: {
     changePage(page, data) {
       this.activePage = page;
-      console.log(this.activePage);
     },
     resultDecode(page, data) {
       this.activePage = page;
       this.dataImage = data;
-      console.log(data);
+    },
+    handleChangeImageUrlOnShareButton(imageUrl) {
+      this.imageUrl = "";
+      this.imageUrl = imageUrl;
+      this.href_facebook_share_button = `https://www.facebook.com/sharer/sharer.php?u=${this.imageUrl}&amp;src=sdkpreparse`;
     }
   },
   components: {
     homePage,
     decodePage,
-    resultDecodePage
+    resultDecodePage,
+    encrypt: Encrypt,
+    FacebookButton
   }
 };
 </script>

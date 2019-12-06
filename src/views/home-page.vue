@@ -15,7 +15,10 @@
           minute with pictures. Everything looks
           <span style="color : #339ed6">amazing</span>, without leaving a trace.
         </p>
-        <button class="huge ui inverted primary basic button">
+        <button
+          @click="goToEncodePage"
+          class="huge ui inverted primary basic button"
+        >
           Encode Image
         </button>
         <button
@@ -40,6 +43,9 @@ export default {
   methods: {
     goToDecodePage() {
       this.$emit("goToDecodePage", "decode-page");
+    },
+    goToEncodePage() {
+      this.$emit("goToEncodePage", "encode-page");
     }
   }
 };
