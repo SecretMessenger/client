@@ -19,6 +19,7 @@
           Encode Image
         </button>
         <button
+          @click="goToDecodePage"
           style="margin-left:7px"
           class="huge ui inverted primary basic button"
         >
@@ -36,7 +37,11 @@ export default {
   data() {
     return {};
   },
-  methods: {}
+  methods: {
+    goToDecodePage() {
+      this.$emit("goToDecodePage", "decode-page");
+    }
+  }
 };
 </script>
 

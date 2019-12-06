@@ -1,8 +1,16 @@
 <template>
   <div>
-    <homePage></homePage>
-    <decodePage></decodePage>
-    <resultDecodePage></resultDecodePage>
+    <homePage
+      @goToDecodePage="changePage"
+      v-if="activePage === 'home-page'"
+    ></homePage>
+    <decodePage
+      @goToHomePage="changePage"
+      v-if="activePage === 'decode-page'"
+    ></decodePage>
+    <resultDecodePage
+      v-if="activePage === 'result-decode-page'"
+    ></resultDecodePage>
   </div>
 </template>
 
@@ -18,7 +26,13 @@ export default {
       activePage: "home-page"
     };
   },
-  methods: {},
+  methods: {
+    changePage(page) {
+      console.log("halo");
+      this.activePage = page;
+      console.log(this.activePage);
+    }
+  },
   components: {
     homePage,
     decodePage,

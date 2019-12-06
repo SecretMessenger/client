@@ -2,12 +2,12 @@
   <div>
     <div class="decode-page">
       <div>
-        <h1 style="color:white;font-family: 'Kalam', cursive;font-size:50px">
+        <h1 class="title-page">
           Decode Message
         </h1>
         <div
-          class="ui blue message"
-          style="font-family: 'Kalam', cursive;background-color:transparent ;max-width:600px;font-size:20px;text-align:justify; margin-bottom:100px"
+          class="ui blue message font-used"
+          style="background-color:transparent ;max-width:600px;font-size:20px;text-align:justify; margin-bottom:100px"
         >
           To decode a hidden message from an image, just choose an image and hit
           the Decode button. Neither the image nor the message that has been
@@ -15,29 +15,48 @@
           happens within your browser.
         </div>
         <button
-          @click.prevent="popUpModal"
-          class="huge ui inverted blue basic button"
-          style="font-family: 'Kalam', cursive;"
+          @click.prevent="popUpModalForm"
+          class="font-used huge ui inverted blue basic button"
         >
           <i class="cloud upload alternate icon"></i>Upload
         </button>
-        <div class="ui basic modal">
+        <button
+          @click.prevent="goToHomePage"
+          class="font-used huge ui inverted blue basic button"
+        >
+          <i class="cloud upload alternate icon"></i>Home Page
+        </button>
+        <div id="error-popup" class="ui basic modal">
+          <div class="ui icon header">
+            <i class="sad cry icon red"></i>
+          </div>
+          <div class="content">
+            <div
+              class="ui red message box-error"
+              style="font-family: 'Kalam', cursive;background-color:transparent ;font-size:20px;text-align:justify;"
+            >
+              {{ error }}
+            </div>
+          </div>
+          <div class="actions">
+            <div class="ui red basic cancel inverted button">
+              <i class="remove icon"></i>
+              Exit
+            </div>
+          </div>
+        </div>
+        <div id="form-upload" class="ui basic modal">
           <div class="ui icon header" style="font-family: 'Kalam', cursive">
             <i class="upload icon"></i>
             Upload Image
           </div>
           <div class="content">
-            <div
-              v-if="error"
-              class="ui red message"
-              style="text-align: center;font-family: 'Kalam', cursive;background-color:transparent ;font-size:20px;"
-            >
+            <div v-if="error" class="ui red message">
               {{ error }}
             </div>
             <form class="ui form">
               <div class="field">
                 <input
-                  v-bind:style="borderInput"
                   style="font-family: 'Kalam', cursive;background-color:transparent;color:white;border:1px solid
                 rgba(255,255,255,0.8)"
                   v-model="password"
@@ -67,7 +86,7 @@
           </div>
           <div class="actions">
             <div
-              v-on="closeModal"
+              @click="closeModal"
               style="font-family: 'Kalam', cursive"
               class="ui red basic cancel inverted button"
             >
@@ -91,6 +110,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
@@ -102,6 +122,9 @@ export default {
     };
   },
   methods: {
+    goToHomePage() {
+      this.$emit("goToHomePage", "home-page");
+    },
     closeModal() {
       this.uploadButton = "";
     },
@@ -116,8 +139,11 @@ export default {
       if (allowedExtension == fileExtension) return true;
       else return false;
     },
-    popUpModal() {
-      $(".ui.modal").modal("show");
+    popUpModalError() {
+      $("#error-popup").modal("show");
+    },
+    popUpModalForm() {
+      $("#form-upload").modal("show");
     },
     submitData() {
       const fd = new FormData();
@@ -126,11 +152,18 @@ export default {
         image: fd,
         password: this.password
       };
-      //   axios({
-      //     method: "post",
-      //     url: "",
-      //     data
-      //   });
+      axios({
+        method: "post",
+        url: "",
+        data
+      })
+        .then(({ data }) => {
+          this.$emit("goToResultDEcodePage", data);
+        })
+        .catch(err => {
+          this.error = err;
+          this.popUpModalError();
+        });
     },
     handleFileUpload() {
       this.image = this.$refs.file.files[0];
@@ -151,6 +184,20 @@ export default {
 </script>
 
 <style>
+.box-error {
+  font-family: "Kalam", cursive;
+  background-color: transparent;
+  font-size: 20px;
+  text-align: justify;
+}
+.title-page {
+  font-family: "Kalam", cursive;
+  color: white;
+  font-size: 50px;
+}
+.font-used {
+  font-family: "Kalam", cursive;
+}
 .ui.file.input {
   display: none;
 }
