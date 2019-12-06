@@ -1,0 +1,36 @@
+<div class="ui modal">
+      <i class="close icon"></i>
+      <div class="header">
+        Decode Image
+      </div>
+      <div class="content">
+        <div class="description">
+          <div class="ui header">
+            Enter Password Below
+          </div>
+          <div class="ui form">
+            <div class="field">
+              <label>Password</label>
+              <input v-model="password" type="password" />
+            </div>
+            <div class="field">
+              <label>Upload</label>
+              <input type="file" ref="file" v-on:change="handleFileUpload" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui red deny button">
+          Cancel
+        </div>
+        <div @click="submitData" class="ui positive right labeled icon button">
+          Upload
+          <i class="cloud upload alternate icon"></i>
+        </div>
+      </div>
+    </div>
+    <button @click="popUpModal" class="ui labeled icon button">
+      <i class="cloud upload alternate icon"></i>
+      Upload
+    </button>

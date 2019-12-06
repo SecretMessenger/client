@@ -1,16 +1,30 @@
 <template>
-  <h1>{{ message }}</h1>
+  <div>
+    <homePage></homePage>
+    <decodePage></decodePage>
+    <resultDecodePage></resultDecodePage>
+  </div>
 </template>
 
 <script>
+import homePage from "./views/home-page";
+import decodePage from "./views/decode-page";
+import resultDecodePage from "./views/result-decode-page";
+
 export default {
+  name: "App",
   data() {
     return {
-      message: 'Hello world',
+      activePage: "home-page"
     };
   },
+  methods: {},
+  components: {
+    homePage,
+    decodePage,
+    resultDecodePage
+  }
 };
 </script>
 
-<style scoped>
-</style>
+<style></style>
