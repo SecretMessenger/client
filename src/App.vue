@@ -1,7 +1,9 @@
 <template>
   <div>
     <h1>{{ message }}</h1>
-    <encrypt></encrypt>
+    <encrypt
+      @show-share-buttons="showShareButton"
+    ></encrypt>
   </div>
 </template>
 
@@ -16,9 +18,17 @@ export default {
     return {
       message: "Hello world"
     };
+  },
+  methods: {
+    showShareButton(){
+      document.getElementsByClassName("addthis-smartlayers").style.display = "block"
+    }
   }
 };
 </script>
 
-<style scoped>
+<style>
+.addthis-smartlayers {
+  display: none;
+}
 </style>

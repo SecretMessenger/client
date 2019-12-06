@@ -16,9 +16,12 @@ export default {
   components: {},
   data() {
     return {
+      upload_image_url: "",
       message: "",
-      image: ""
-    };
+      image: "",
+      image_url: "",
+      password: ""
+    }
   },
   methods: {
     triggerFunction() {
@@ -33,10 +36,10 @@ export default {
 
       let reader = new FileReader();
       reader.onload = function() {
-        let dataURL = reader.result;
+        this.upload_image_url = reader.result;
         let preview = document.getElementById("preview");
-        preview.src = dataURL;
-        console.log(reader);
+        preview.src = this.upload_image_url;
+        // console.log(reader);
       };
       reader.readAsDataURL(input.files[0]);
     },
@@ -50,7 +53,17 @@ export default {
           image: fd,
           message: this.message
         }
-      });
+      })
+        .then(({ data }) => {
+          this.image_url = data.url
+          this.password = data.password
+          this.showUploadedImage()
+          this.$emit('show-share-buttons')
+        })
+        .catch(err => console.log(err))
+    },
+    showUploadedImage(){
+      document.getElementById("preview").src = this.image_url
     }
   }
 };
